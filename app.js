@@ -25,7 +25,7 @@ class Game {
 
   fillTicPosition(index) {
     this.currentPlayer = this.currentPlayer === this.firstPlayer
-      ? this.secondPlayer : this.firstPlayer;
+      ? this.firstPlayer : this.secondPlayer;
     this.boards[index] = this.currentPlayer;
   }
 
