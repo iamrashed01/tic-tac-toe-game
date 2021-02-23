@@ -3,6 +3,7 @@ body {
   padding: 30px;
 }
 .box {
+  margin: auto;
   width: 600px;
   max-width: 100%;
   display: grid;
