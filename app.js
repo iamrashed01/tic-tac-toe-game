@@ -3,10 +3,18 @@ const box = document.querySelector('.box');
 const restartGameBtn = document.getElementById('restart_game');
 
 let amIZero = true;
-const userOne = 'rashed';
-const userTwo = 'robin';
+let userOne = 'User One';
+let userTwo = 'User Two';
 let winnerFound = false;
 let values = ['', '', '', '', '', '', '', '', ''];
+const f_user = prompt('First User Name?:');
+if (f_user) {
+  userOne = f_user;
+}
+const s_user = prompt('Second User Name?:');
+if (s_user) {
+  userTwo = s_user;
+}
 
 // fill my position
 options.forEach((el) => el.addEventListener('click', function () {
@@ -41,13 +49,13 @@ options.forEach((el) => el.addEventListener('click', function () {
     const b = values[winCombo[1]];
     const c = values[winCombo[2]];
     if (a && b && c && a === b && b === c) {
-      console.log(`Winner is ${a}`);
+      const printResult = confirm(`Winner is ${a}\nWanna Play More!?`);
       winnerFound = true;
-      let timer = null;
-      timer = setTimeout(() => {
+      if (printResult) {
         restartGame();
-        clearInterval(timer);
-      }, 1000);
+      } else {
+        restartGame();
+      }
     }
   }
 }));
