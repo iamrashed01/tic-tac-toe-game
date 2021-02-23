@@ -1,0 +1,76 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css");
+body {
+  padding: 30px;
+}
+.box {
+  width: 600px;
+  max-width: 100%;
+  display: grid;
+  grid-column-gap: 4px;
+  grid-row-gap: 4px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.option {
+  position: relative;
+  height: 100px;
+  border-radius: 3px;
+  box-shadow: 0 0 1px rgb(102, 101, 101);
+  transition: all 0.3s ease 0s;
+  transition-delay: 100ms;
+  transition-duration: 800ms;
+}
+
+.option:hover {
+  transition-delay: 0ms;
+  background: rgb(173, 229, 255);
+}
+
+.c .option:hover {
+  background: rgb(255, 173, 173);
+}
+
+/* option icon */
+/* "\f62a" CROSS SIGN*/
+/* "\f28a" ZERO SIGN*/
+.option::before {
+  content: "";
+  font-family: bootstrap-icons !important;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 35px;
+}
+.option.cross:before {
+  font-size: 50px;
+}
+
+.option.zero::before {
+  content: "\f28a";
+}
+
+.option.cross::before {
+  content: "\f62a";
+}
+
+/* disable cursor if value exists */
+.option.cross,
+.option.zero {
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* controls */
+.controls {
+  text-align: center;
+}
+#restart_game {
+  margin-top: 10px;
+  background-color: tomato;
+  color: azure;
+  cursor: pointer;
+  padding: 5px 10px;
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
