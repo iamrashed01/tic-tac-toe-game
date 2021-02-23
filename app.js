@@ -1,71 +1,96 @@
 const options = document.querySelectorAll('.option');
-const box = document.querySelector('.box');
+const gameWrapper = document.querySelector('body');
 const restartGameBtn = document.getElementById('restart_game');
+const currentPlayer = document.getElementById('currentPlayer');
 
-let amIZero = true;
-let userOne = 'User One';
-let userTwo = 'User Two';
-let winnerFound = false;
-let values = ['', '', '', '', '', '', '', '', ''];
-const f_user = prompt('First User Name?:');
-if (f_user) {
-  userOne = f_user;
-}
-const s_user = prompt('Second User Name?:');
-if (s_user) {
-  userTwo = s_user;
-}
-
-// fill my position
-options.forEach((el) => el.addEventListener('click', function () {
-  if (this.classList[1] || winnerFound) {
-    return;
-  }
-  if (amIZero) {
-    this.classList.add('zero');
-    values[this.dataset.id] = userOne;
-    box.classList.add('c');
-    amIZero = false;
-  } else {
-    this.classList.add('cross');
-    values[this.dataset.id] = userTwo;
-    box.classList.remove('c');
-    amIZero = true;
+// game class
+class Game {
+  constructor(fPlayer, sPlayer) {
+    this.firstPlayer = fPlayer || 'user one';
+    this.secondPlayer = sPlayer || 'user two';
+    this.currentPlayer = this.firstPlayer;
+    this.gameOver = false;
+    this.boards = ['', '', '', '', '', '', '', '', ''];
+    this.winningConditions = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
   }
 
-  const winningConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < 8; i++) {
-    const winCombo = winningConditions[i];
-    const a = values[winCombo[0]];
-    const b = values[winCombo[1]];
-    const c = values[winCombo[2]];
-    if (a && b && c && a === b && b === c) {
-      const printResult = confirm(`Winner is ${a}\nWanna Play More!?`);
-      winnerFound = true;
-      if (printResult) {
-        restartGame();
-      } else {
-        restartGame();
+  fillTicPosition(index) {
+    this.currentPlayer = this.currentPlayer === this.firstPlayer
+      ? this.secondPlayer : this.firstPlayer;
+    this.boards[index] = this.currentPlayer;
+  }
+
+  resetGame() {
+    this.currentPlayer = this.firstPlayer;
+    this.gameOver = false;
+    this.boards = ['', '', '', '', '', '', '', '', ''];
+  }
+
+  stopGame() {
+    this.gameOver = true;
+  }
+
+  printTheWinner(func) {
+    for (let i = 0; i < 8; i++) {
+      const winCombo = this.winningConditions[i];
+      const a = this.boards[winCombo[0]];
+      const b = this.boards[winCombo[1]];
+      const c = this.boards[winCombo[2]];
+      if (a && b && c && a === b && b === c) {
+        let timer = null;
+        timer = setTimeout(() => {
+          confirm(`Winner is ${a}\nWanna Play More!?`);
+          this.resetGame();
+          func();
+          clearInterval(timer);
+        }, 300);
+        break;
       }
     }
   }
-}));
-
-function restartGame() {
-  winnerFound = false;
-  options.forEach((option) => option.classList.remove('zero', 'cross'));
-  values = ['', '', '', '', '', '', '', '', ''];
 }
 
+// taking player names
+const pOne = prompt('First Player Name?:');
+const pTwo = prompt('Second Player Name?:');
+
+// create ticTocToe game
+const ticTocToe = new Game(pOne, pTwo);
+currentPlayer.innerText = ticTocToe.currentPlayer;
+
+// fill my position
+options.forEach((el) => el.addEventListener('click', function () {
+  if (this.classList[1] || ticTocToe.gameOver) {
+    return;
+  }
+  if (ticTocToe.currentPlayer === ticTocToe.firstPlayer) {
+    this.classList.add('zero');
+    gameWrapper.classList.add('c');
+    ticTocToe.fillTicPosition(this.dataset.id);
+  } else {
+    this.classList.add('cross');
+    gameWrapper.classList.remove('c');
+    ticTocToe.fillTicPosition(this.dataset.id);
+  }
+
+  currentPlayer.innerText = ticTocToe.currentPlayer;
+  ticTocToe.printTheWinner(clearClassFromOptions);
+}));
+
 restartGameBtn.addEventListener('click', () => {
-  restartGame();
+  clearClassFromOptions();
+  ticTocToe.resetGame();
 });
+
+function clearClassFromOptions() {
+  options.forEach((option) => option.classList.remove('zero', 'cross'));
+}
