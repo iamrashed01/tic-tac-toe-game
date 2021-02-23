@@ -8,7 +8,7 @@ class Game {
   constructor(fPlayer, sPlayer) {
     this.firstPlayer = fPlayer || 'user one';
     this.secondPlayer = sPlayer || 'user two';
-    this.currentPlayer = this.firstPlayer;
+    this.currentPlayer = fPlayer;
     this.gameOver = false;
     this.boards = ['', '', '', '', '', '', '', '', ''];
     this.winningConditions = [
@@ -24,22 +24,24 @@ class Game {
   }
 
   fillTicPosition(index) {
-    this.currentPlayer = this.currentPlayer === this.firstPlayer
-      ? this.firstPlayer : this.secondPlayer;
     this.boards[index] = this.currentPlayer;
+    const nextPlayer = this.currentPlayer === this.firstPlayer
+      ? this.secondPlayer : this.firstPlayer;
+    this.currentPlayer = nextPlayer;
   }
 
   resetGame() {
     this.currentPlayer = this.firstPlayer;
     this.gameOver = false;
     this.boards = ['', '', '', '', '', '', '', '', ''];
+    this.clearClassFromOptions();
   }
 
   stopGame() {
     this.gameOver = true;
   }
 
-  printTheWinner(func) {
+  printTheWinner(cb) {
     for (let i = 0; i < 8; i++) {
       const winCombo = this.winningConditions[i];
       const a = this.boards[winCombo[0]];
@@ -48,9 +50,7 @@ class Game {
       if (a && b && c && a === b && b === c) {
         let timer = null;
         timer = setTimeout(() => {
-          confirm(`Winner is ${a}\nWanna Play More!?`);
-          this.resetGame();
-          func();
+          cb(a);
           clearInterval(timer);
         }, 300);
         break;
@@ -58,13 +58,18 @@ class Game {
     }
   }
 }
+Game.prototype.clearClassFromOptions = () => {
+  gameWrapper.classList.remove('c');
+  options.forEach((option) => option.classList.remove('zero', 'cross'));
+};
 
 // taking player names
-const pOne = prompt('First Player Name?:');
-const pTwo = prompt('Second Player Name?:');
+const firstPlayerInput = prompt('First Player Name?:');
+const secondPlayerInput = prompt('Second Player Name?:');
 
 // create ticTocToe game
-const ticTocToe = new Game(pOne, pTwo);
+const ticTocToe = new Game(firstPlayerInput, secondPlayerInput);
+
 currentPlayer.innerText = ticTocToe.currentPlayer;
 
 // fill my position
@@ -83,14 +88,16 @@ options.forEach((el) => el.addEventListener('click', function () {
   }
 
   currentPlayer.innerText = ticTocToe.currentPlayer;
-  ticTocToe.printTheWinner(clearClassFromOptions);
+  ticTocToe.printTheWinner(async (winner) => {
+    const userInput = confirm(`Winner is ${winner}\nWanna Play More!?`);
+    if (userInput) {
+      ticTocToe.resetGame();
+    } else {
+      ticTocToe.stopGame();
+    }
+  });
 }));
 
 restartGameBtn.addEventListener('click', () => {
-  clearClassFromOptions();
   ticTocToe.resetGame();
 });
-
-function clearClassFromOptions() {
-  options.forEach((option) => option.classList.remove('zero', 'cross'));
-}
