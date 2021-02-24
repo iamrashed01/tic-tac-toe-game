@@ -58,7 +58,8 @@ class Game {
     }
   }
 }
-Game.prototype.clearClassFromOptions = () => {
+Game.prototype.clearClassFromOptions = function () {
+  currentPlayer.innerText = this.currentPlayer;
   gameWrapper.classList.remove('c');
   options.forEach((option) => option.classList.remove('zero', 'cross'));
 };
